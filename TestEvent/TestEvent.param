@@ -1,0 +1,18 @@
+[State]
+Type=Enum
+Items=Global Enabled;Opt-In;Disabled
+Category=Options
+CategoryOrder=0
+Index=0
+Label=State
+Default=Disabled
+Description=If this event plugin is enabled.
+
+[Software Title]
+Type=string
+Category=Configuration
+CategoryOrder=1
+Index=0
+Label=Software Title
+Default=V-Ray for 3dsmax 2014 for x64
+Description=Which software titles whose version we should report. As seen in the 'Add/remove programs' list. Separated by ;
