@@ -44,17 +44,12 @@ print(" ***Out folder:", outFolder)
 # img_path = "R:/Project/SCH001 Scharp R&D/Ben H/Post Image Submission/V01/TILES/V01.0000.exr"
 # img_out_path = "R:/Project/SCH001 Scharp R&D/Ben H/Post Image Submission/V01/V01.0000_" + str(FinalFrameWidth) + ".exr"
 
-# inFolder = "R:/Project/SCH001 Scharp R&D/Ben H/Post Image Submission/V01/TILES/"
+inFolder = "R:/Project/SCH001 Scharp R&D/Ben H/Post Image Submission/V01/TILES/"
 # outFolder = "R:/Project/SCH001 Scharp R&D/Ben H/Post Image Submission/V01/out/"
 
 print("GET FILES:")
 
-# files in the inFolder directory
-files = os.listdir( inFolder ) 
-# search for _tile_ in the output directory
-tile_regex = re.compile("_tile_") 
-
-print("LIST OF FILES:")
+file = "V01.0000.exr"
 
 print("Resize:", file)
 
