@@ -360,7 +360,7 @@ class DraftEventListener (DeadlineEventListener):
 			self.LogInfo(outFile)
 
 			# load template that will actulaly extract the layers
-			script_path = "events/ResizeImages/Resize_image_test.py"
+			script_path = "events/ResizeImagesWithTasks/Resize_image_single_frame.py"
 			draftTemplate_jh = RepositoryUtils.GetRepositoryFilePath(script_path, True)
 			
 			# change name to remove [EXr-TRACT] tag from draft job in deadline
@@ -422,7 +422,7 @@ class DraftEventListener (DeadlineEventListener):
 			
 						# create draft job in deadline to launch template script and extract layers
 						try:
-							# self.CreateDraftJob(draftTemplate_jh, job, "Resize", 0, outFileNameOverride=outFile, draftArgs=scriptArgs, dependencies=exrtract_job)
+							self.CreateDraftJob(draftTemplate_jh, job, "Resize", 0, outFileNameOverride=file, draftArgs=scriptArgs, dependencies=exrtract_job)
 							self.LogInfo("***Draft [Resize] job submit success")
 						
 						except:
