@@ -110,6 +110,7 @@ class DraftEventListener (DeadlineEventListener):
 
 			inputFrameList = FrameUtils.ToFrameString(frames)
 		# TODO: add custom frames here
+		self.LogInfo(inputFrameList)
 
 		# Grab the submission-related plugin settings
 		relativeFolder = self.GetConfigEntryWithDefault("OutputFolder", "Draft")
@@ -424,7 +425,11 @@ class DraftEventListener (DeadlineEventListener):
 						self.LogInfo(f"Resize: {file}")
 						exr_list.append(str(file))
 			
-			scriptArgs.append('FrameRangeOverride="%d" ' % len(exr_list))
+			# set frame list
+			# newFrameList='1-11'
+			# job.set_FramesList(newFrameList)
+
+			# job.SetJobPluginInfoKeyValue("ChunkSize", "1")
 
 			# create draft job in deadline to launch template script and extract layers
 			try:
@@ -437,6 +442,10 @@ class DraftEventListener (DeadlineEventListener):
 			print("Finish draft job")
 
 			# -------- finsih of [resize] script here --------
+
+		if job.JobName.endswith("[Resize]"):
+			# TODO: Set frame range string to be len of file list
+			RepositoryUtils.SetJobFrameRange(job, "1-8", 1)
 
 		try:
 			# Check if we need to generate movies to upload to Shotgun
