@@ -109,6 +109,7 @@ class DraftEventListener (DeadlineEventListener):
 				frames.append(frame + frameOffset)
 
 			inputFrameList = FrameUtils.ToFrameString(frames)
+		# TODO: add custom frames here
 
 		# Grab the submission-related plugin settings
 		relativeFolder = self.GetConfigEntryWithDefault("OutputFolder", "Draft")
@@ -413,6 +414,7 @@ class DraftEventListener (DeadlineEventListener):
 			tile_regex = re.compile("_tile_") 
 
 			self.LogInfo("LIST OF FILES:")
+			exr_list = []
 			for file in files:
 				if file.endswith(".exr"):
 				# if file.startswith("V01_RE"): # test on only render elements
@@ -420,16 +422,20 @@ class DraftEventListener (DeadlineEventListener):
 					if tile_regex.search(file) == None:
 						# must not be a tile
 						self.LogInfo(f"Resize: {file}")
+						exr_list.append(str(file))
 			
-						# create draft job in deadline to launch template script and extract layers
-						try:
-							self.CreateDraftJob(draftTemplate_jh, job, "Resize", 0, outFileNameOverride=file, draftArgs=scriptArgs, dependencies=exrtract_job)
-							self.LogInfo("***Draft [Resize] job submit success")
-						
-						except:
-							self.LogInfo("Failed to create draft [Resize] job")
+			scriptArgs.append('FrameRangeOverride="%d" ' % len(exr_list))
 
-						print("Finish draft job")
+			# create draft job in deadline to launch template script and extract layers
+			try:
+				self.CreateDraftJob(draftTemplate_jh, job, "Resize", 0, outFileNameOverride=file, draftArgs=scriptArgs, dependencies=exrtract_job)
+				self.LogInfo("***Draft [Resize] job submit success")
+			
+			except:
+				self.LogInfo("Failed to create draft [Resize] job")
+
+			print("Finish draft job")
+
 			# -------- finsih of [resize] script here --------
 
 		try:
