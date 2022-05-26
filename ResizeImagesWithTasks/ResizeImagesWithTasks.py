@@ -389,10 +389,11 @@ class DraftEventListener (DeadlineEventListener):
 			colorSpaceOut = "Identity"
 			annotationsString = job.GetJobExtraInfoKeyValueWithDefault( "DraftAnnotationsString", "None" )
 			annotationsFramePaddingSize = job.GetJobExtraInfoKeyValueWithDefault( "DraftAnnotationsFramePaddingSize", "None" )
-			format['isDistributed'] = False
+			
 
 			# here are the custom arguments that need to be passed to the new draft job.
 			scriptArgs = []
+			format['isDistributed'] = True
 			
 			# pass values of final image size to use in resize
 			scriptArgs.append('FinalImageWidth="%s" ' % FinalImageWidth)
