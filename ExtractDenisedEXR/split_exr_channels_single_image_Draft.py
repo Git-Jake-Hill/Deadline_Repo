@@ -7,7 +7,7 @@ import sys
 import os
 
 # Layers to output
-layerList = ['VRayRawLighting','VRaySpecular', 'VRayReflection', 'VRayRefraction', 'Glare']
+# layerList = ['VRayRawLighting','VRaySpecular', 'VRayReflection', 'VRayRefraction', 'Glare']
 # VRayRawLighting,VRaySpecular, VRayReflection, VRayRefraction, Glare
 layerList = []
 
@@ -56,13 +56,13 @@ channelMap = { 'red': 'R', 'green': 'G', 'blue': 'B', 'alpha': 'A',
 # currFile = ReplaceFilenameHashesWithNumber( inFilePattern, 0 )
 frame = Draft.Image.ReadFromFile( inputFile )
 channelNames = frame.GetChannelNames()
-
+# print("Channel Names:", channelNames)
 
 # Create a dictionary of layers,
 # with the layer name as the key, and the value as the list of channels
 layers = {}
 for name in channelNames:
-    # print(name)
+    print("Channel Name:", name)
     
     # Specific layer
     if name.rfind( '.' ) >= 0:
@@ -81,9 +81,6 @@ for name in channelNames:
         print("Ignoring the following layer.channel: ", name, " (channel not recognized as RGBA)")
 
 
-# Read in the frame.
-# frame = Draft.Image.ReadFromFile( inputFile )
-
 # save out the RGB pass.
 imageOnly = Draft.Image.CreateImage( frame.width, frame.height, ["R","G","B"] )
 imageOnly.Copy( frame, channels = ["R","G","B"] )
@@ -95,13 +92,17 @@ non_denoise_image = Draft.Image.CreateImage( frame.width, frame.height, ["R","G"
 non_denoise_image.Copy( frame_non_denoise, channels = ["R","G","B"] )
 non_denoise_image.WriteToFile( non_denoise_RGB )
 
+# Read in the frame.
+frame = Draft.Image.ReadFromFile( inputFile )
+print("Extract file path:", inputFile)
+
 # Extract the layers from the image, saving each as a separate image.
 for ( layer, channels ) in layers.items():
     prefix = ''
     if layer is not None:
         # TODO: dont want layer prefix on channel
-        # prefix = layer + '.'
-        pass
+        prefix = layer + '.'
+        
     channelList = [ prefix + channel for channel in channels ]
     imgLayer = Draft.Image.CreateImage( frame.width, frame.height, channelList )
    
