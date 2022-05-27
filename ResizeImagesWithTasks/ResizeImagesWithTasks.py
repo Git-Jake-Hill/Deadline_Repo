@@ -42,6 +42,7 @@ class DraftEventListener (DeadlineEventListener):
 		# type: () -> None
 		# self.OnJobFinishedCallback += self.OnJobFinished
 		self.OnJobSubmittedCallback += self.OnJobSubmitted
+		self.OnJobStartedCallback += self.OnJobStart
 		
 		#member variables
 		self.OutputPathCollection = {} # type: Dict[str, int]
@@ -50,6 +51,7 @@ class DraftEventListener (DeadlineEventListener):
 	def Cleanup(self):
 		# type: () -> None
 		del self.OnJobSubmittedCallback
+		del self.OnJobStartedCallback
 
 	# Utility function that creates a Deadline Job based on given parameters
 	def CreateDraftJob(
@@ -337,6 +339,40 @@ class DraftEventListener (DeadlineEventListener):
 
 
 	# ----------------------------------------------------------------------------------------------------------------------------------------------------
+	
+	## This is called when the job starts rendering.
+	def OnJobStart(self, job):
+		# This will update the number of tasks to match the image files that need to be resized.
+		# It must wait until the extract job is done to count all images, thats why its on job start.
+		if job.JobName.endswith("[Resize]"):
+			# Get files to create one task per image
+			self.LogInfo("GET FILES:")
+			self.LogInfo(" ")
+			# files in the inFolder directory
+			inFolder = job.JobOutputDirectories[0] + "\\"
+			self.LogInfo(inFolder)
+			
+			files = os.listdir( inFolder ) 
+			self.LogInfo(str(files))
+			# search for _tile_ in the output directory
+			tile_regex = re.compile("_tile_") 
+
+			self.LogInfo("LIST OF FILES:")
+			exr_list = []
+			for file in files:
+				if file.endswith(".exr"):
+				# if file.startswith("V01_RE"): # test on only render elements
+					# ignore files and folder that are not exr
+					if tile_regex.search(file) == None:
+						# must not be a tile
+						self.LogInfo(f"Resize: {file}")
+						exr_list.append(str(file))
+			
+			# set frame string range 1-x where x is the lenth of the list 
+			frame_string = "1-" + str(len(exr_list))
+
+			# set job, frame range, chunk size
+			RepositoryUtils.SetJobFrameRange(job, frame_string, 1)
 
 
 	## This is called when the job is submitted.
@@ -415,35 +451,6 @@ class DraftEventListener (DeadlineEventListener):
 
 			# -------- finsih of [resize] script here --------
 
-		if job.JobName.endswith("[Resize]"):
-			# Get files to create one task per image
-			self.LogInfo("GET FILES:")
-			self.LogInfo(" ")
-			# files in the inFolder directory
-			inFolder = job.JobOutputDirectories[0] + "\\"
-			self.LogInfo(inFolder)
-			
-			files = os.listdir( inFolder ) 
-			self.LogInfo(str(files))
-			# search for _tile_ in the output directory
-			tile_regex = re.compile("_tile_") 
-
-			self.LogInfo("LIST OF FILES:")
-			exr_list = []
-			for file in files:
-				if file.endswith(".exr"):
-				# if file.startswith("V01_RE"): # test on only render elements
-					# ignore files and folder that are not exr
-					if tile_regex.search(file) == None:
-						# must not be a tile
-						self.LogInfo(f"Resize: {file}")
-						exr_list.append(str(file))
-			
-			# set frame string range 1-x where x is the lenth of the list 
-			frame_string = "1-" + str(len(exr_list))
-
-			# set job, frame range, chunk size
-			RepositoryUtils.SetJobFrameRange(job, frame_string, 1)
 
 
 		try:
