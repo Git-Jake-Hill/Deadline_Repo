@@ -81,9 +81,9 @@ class DraftEventListener (DeadlineEventListener):
 
 		jobOutputFile = outputFilenames[outputIndex]
 		jobOutputDir = outputDirectories[outputIndex]
-		# print("***ERROR HERE***\n")
-		print(jobOutputDir,jobOutputFile)
-		# self.LogInfo(jobOutputDir,jobOutputFile) # output path and file to log
+		# output path and file to log
+		print("Output dir:", jobOutputDir)
+		print("File name:", jobOutputFile) 
 
 		inputFrameList = ""
 		frames = []
@@ -402,7 +402,7 @@ class DraftEventListener (DeadlineEventListener):
 
 			# create draft job in deadline to launch template script and extract layers
 			try:
-				exrtract_job = self.CreateDraftJob(draftTemplate_jh, job, "EXr-TRACT", 0, outFileNameOverride=outFile, draftArgs=scriptArgs, dependencies=parent_job)
+				self.CreateDraftJob(draftTemplate_jh, job, "EXr-TRACT", 0, outFileNameOverride=outFile, draftArgs=scriptArgs, dependencies=parent_job)
 				self.LogInfo("Draft job submit success")
 				
 			except:
@@ -413,65 +413,6 @@ class DraftEventListener (DeadlineEventListener):
 
 
 
-		# -------- start of [resize] script here --------
-		def create_resize_job(parent_job):
-			print("Start draft job")
-
-			# get view path
-			print(job.JobOutputFileNames[0])
-			image, exten = job.JobOutputFileNames[0].rsplit( '.', 1 )
-			outFile = job.JobOutputDirectories[0] + "\\" + image + "_denoised." + exten 
-			self.LogInfo(outFile)
-
-			# load template that will actulaly extract the layers
-			script_path = "events/ResizeImages/Resize_image_test.py"
-			draftTemplate_jh = RepositoryUtils.GetRepositoryFilePath(script_path, True)
-			
-			# change name to remove [EXr-TRACT] tag from draft job in deadline
-			print("Name =", job.JobName)
-			original_name = job.JobName
-			job.JobName, ms_tag = original_name.rsplit( '[EXr-TRACT]', 1 )
-
-			# access the values for the layers that wil be extracted
-			layerList = job.GetJobExtraInfoKeyValue("REToDenoise") 
-			# access the values for Final Image Size
-			FinalImageWidth = job.GetJobExtraInfoKeyValue("FinalImageWidth") 
-			FinalImageHeight = job.GetJobExtraInfoKeyValue("FinalImageHeight") 
-
-			# set dependency of new job on current job
-			parent_job = parent_job
-
-			# default settings (not needed for this)
-			extension = "jpg"
-			isMovie = False
-			format = {'extension' : extension, 'isMovie' : isMovie}
-			resolution = "0.5"
-			codec = "jpeg"
-			quality = "85"
-			frameRate = "25"
-			colorSpaceIn = "Identity"
-			colorSpaceOut = "Identity"
-			annotationsString = job.GetJobExtraInfoKeyValueWithDefault( "DraftAnnotationsString", "None" )
-			annotationsFramePaddingSize = job.GetJobExtraInfoKeyValueWithDefault( "DraftAnnotationsFramePaddingSize", "None" )
-			format['isDistributed'] = False
-
-			# here are the custom arguments that need to be passed to the new draft job.
-			scriptArgs = []
-			
-			# pass values of final image size to use in resize
-			scriptArgs.append('FinalImageWidth="%s" ' % FinalImageWidth)
-			scriptArgs.append('FinalImageHeight="%s" ' % FinalImageHeight)
-
-			# create draft job in deadline to launch template script and extract layers
-			try:
-				self.CreateDraftJob(draftTemplate_jh, job, "resize", 0, outFileNameOverride=outFile, draftArgs=scriptArgs, dependencies=parent_job)
-				self.LogInfo("*Draft [resize] job submit success")
-			
-			except:
-				self.LogInfo("Failed to create draft [resize] job")
-
-			print("Finish draft job")
-			# -------- finsih of [resize] script here --------
 
 		try:
 			# Check if we need to generate movies to upload to Shotgun
