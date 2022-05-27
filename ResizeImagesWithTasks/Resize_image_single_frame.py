@@ -2,7 +2,6 @@ import Draft
 import sys 
 import re
 import os
-# from System.IO import *
 
 # load image size settings
 FinalFrameWidth = 4500
@@ -15,9 +14,9 @@ print(sys.argv)
 for item in sys.argv:
     print("  List args:", item)
 
-    # if item.startswith("inFile="):
-    #     img_path = item.split("=")[-1]
-    #     print("Path found =", img_path)
+    if item.startswith("taskStartFrame="):
+        task_id = int(item.split("=")[-1]) -1
+        print("Task ID:", task_id)
 
     if item.startswith("FinalImageWidth="):
         FinalFrameWidth = int(item.split("=")[-1])
@@ -40,18 +39,44 @@ print(" ***In folder:", inFolder)
 outFolder = outFolder.rsplit('\\', 1)[0] + '\\'
 print(" ***Out folder:", outFolder)
 
+# print("SLAVE INFO:")
+# slave = RepositoryUtils.GetSlavesRenderingJob(job_id)
+# slave_info = RepositoryUtils.GetSlaveInfo(slave, True)
+# slave_job = slave_info.SlaveCurrentJobName
+# slave_task_ID = slave_info.SlaveCurrentTaskIds[0] # current task ID
+# print("Current Task ID:", slave_task_ID)
+
 # select image path - pass in from [maxscript] or [exrtract]
 # img_path = "R:/Project/SCH001 Scharp R&D/Ben H/Post Image Submission/V01/TILES/V01.0000.exr"
 # img_out_path = "R:/Project/SCH001 Scharp R&D/Ben H/Post Image Submission/V01/V01.0000_" + str(FinalFrameWidth) + ".exr"
 
-inFolder = "R:/Project/SCH001 Scharp R&D/Ben H/Post Image Submission/V01/TILES/"
+# inFolder = "R:/Project/SCH001 Scharp R&D/Ben H/Post Image Submission/V01/TILES/"
 # outFolder = "R:/Project/SCH001 Scharp R&D/Ben H/Post Image Submission/V01/out/"
+# print("GET FILES:")
+# file = "V01.0000.exr"
 
+# Get files to create one task per image
 print("GET FILES:")
+print(" ")
+# files in the inFolder directory
+files = os.listdir( inFolder ) 
+print(str(files))
+# search for _tile_ in the output directory
+tile_regex = re.compile("_tile_") 
 
-file = "V01.0000.exr"
+print("LIST OF FILES:")
+exr_list = []
+for file in files:
+    if file.endswith(".exr"):
+    # if file.startswith("V01_RE"): # test on only render elements
+        # ignore files and folder that are not exr
+        if tile_regex.search(file) == None:
+            # must not be a tile
+            print(f"Files: {file}")
+            exr_list.append(str(file))
 
-print("Resize:", file)
+file = exr_list[task_id]
+print("\nResize:", file)
 
 try:
     img_path = inFolder + file # set the input file (VIEW/TILES subfolder)
