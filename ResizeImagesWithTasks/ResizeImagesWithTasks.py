@@ -81,9 +81,9 @@ class DraftEventListener (DeadlineEventListener):
 
 		jobOutputFile = outputFilenames[outputIndex]
 		jobOutputDir = outputDirectories[outputIndex]
-		# print("***ERROR HERE***\n")
-		print(jobOutputDir,jobOutputFile)
-		# self.LogInfo(jobOutputDir,jobOutputFile) # output path and file to log
+		# output path and file to log
+		print("Output dir:", jobOutputDir)
+		print("File name:", jobOutputFile) 
 
 		inputFrameList = ""
 		frames = []
@@ -358,7 +358,7 @@ class DraftEventListener (DeadlineEventListener):
 			print(job.JobOutputFileNames[0])
 			image, exten = job.JobOutputFileNames[0].rsplit( '.', 1 )
 			# outFile = job.JobOutputDirectories[0] + "\\" + image + "_denoised." + exten
-			outFile = job.JobOutputDirectories[0] + "\\" + image + exten
+			outFile = job.JobOutputDirectories[0] + "\\" + image + "." + exten
 			self.LogInfo(outFile)
 
 			# load template that will actulaly extract the layers
@@ -402,15 +402,29 @@ class DraftEventListener (DeadlineEventListener):
 			scriptArgs.append('FinalImageHeight="%s" ' % FinalImageHeight)
 
 			# -------------------------------------
-			# Get files to create one job per image
-			self.LogInfo("GET FILES:")
 
+			# create draft job in deadline to launch template script and extract layers
+			try:
+				self.CreateDraftJob(draftTemplate_jh, job, "Resize", 0, outFileNameOverride=outFile, draftArgs=scriptArgs, dependencies=exrtract_job)
+				self.LogInfo("***Draft [Resize] job submit success")
+			
+			except:
+				self.LogInfo("Failed to create draft [Resize] job")
+
+			print("Finish draft job")
+
+			# -------- finsih of [resize] script here --------
+
+		if job.JobName.endswith("[Resize]"):
+			# Get files to create one task per image
+			self.LogInfo("GET FILES:")
+			self.LogInfo(" ")
 			# files in the inFolder directory
-			inFolder = "R:/Project/SCH001 Scharp R&D/Ben H/Post Image Submission/V01/TILES/"
-			# files = os.listdir( job.JobOutputDirectories[0] + "\\" ) 
+			inFolder = job.JobOutputDirectories[0] + "\\"
+			self.LogInfo(inFolder)
+			
 			files = os.listdir( inFolder ) 
 			self.LogInfo(str(files))
-
 			# search for _tile_ in the output directory
 			tile_regex = re.compile("_tile_") 
 
@@ -425,27 +439,12 @@ class DraftEventListener (DeadlineEventListener):
 						self.LogInfo(f"Resize: {file}")
 						exr_list.append(str(file))
 			
-			# set frame list
-			# newFrameList='1-11'
-			# job.set_FramesList(newFrameList)
+			# set frame string range 1-x where x is the lenth of the list 
+			frame_string = "1-" + str(len(exr_list))
 
-			# job.SetJobPluginInfoKeyValue("ChunkSize", "1")
+			# set job, frame range, chunk size
+			RepositoryUtils.SetJobFrameRange(job, frame_string, 1)
 
-			# create draft job in deadline to launch template script and extract layers
-			try:
-				self.CreateDraftJob(draftTemplate_jh, job, "Resize", 0, outFileNameOverride=file, draftArgs=scriptArgs, dependencies=exrtract_job)
-				self.LogInfo("***Draft [Resize] job submit success")
-			
-			except:
-				self.LogInfo("Failed to create draft [Resize] job")
-
-			print("Finish draft job")
-
-			# -------- finsih of [resize] script here --------
-
-		if job.JobName.endswith("[Resize]"):
-			# TODO: Set frame range string to be len of file list
-			RepositoryUtils.SetJobFrameRange(job, "1-8", 1)
 
 		try:
 			# Check if we need to generate movies to upload to Shotgun
