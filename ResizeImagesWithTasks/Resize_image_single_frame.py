@@ -39,21 +39,6 @@ print(" ***In folder:", inFolder)
 outFolder = outFolder.rsplit('\\', 1)[0] + '\\'
 print(" ***Out folder:", outFolder)
 
-# print("SLAVE INFO:")
-# slave = RepositoryUtils.GetSlavesRenderingJob(job_id)
-# slave_info = RepositoryUtils.GetSlaveInfo(slave, True)
-# slave_job = slave_info.SlaveCurrentJobName
-# slave_task_ID = slave_info.SlaveCurrentTaskIds[0] # current task ID
-# print("Current Task ID:", slave_task_ID)
-
-# select image path - pass in from [maxscript] or [exrtract]
-# img_path = "R:/Project/SCH001 Scharp R&D/Ben H/Post Image Submission/V01/TILES/V01.0000.exr"
-# img_out_path = "R:/Project/SCH001 Scharp R&D/Ben H/Post Image Submission/V01/V01.0000_" + str(FinalFrameWidth) + ".exr"
-
-# inFolder = "R:/Project/SCH001 Scharp R&D/Ben H/Post Image Submission/V01/TILES/"
-# outFolder = "R:/Project/SCH001 Scharp R&D/Ben H/Post Image Submission/V01/out/"
-# print("GET FILES:")
-# file = "V01.0000.exr"
 
 # Get files to create one task per image
 print("GET FILES:")
