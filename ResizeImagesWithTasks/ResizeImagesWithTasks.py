@@ -385,7 +385,18 @@ class DraftEventListener (DeadlineEventListener):
 
 		# -------- start of [resize] script here --------
 		if job.JobName.endswith("[EXr-TRACT]"):
-			print("-----Start [resize] draft job-----")
+
+			# remove previous resize job
+			cur_batch_name = job.JobBatchName
+			list_of_jobs = RepositoryUtils.GetJobs( True )
+			for job_name in list_of_jobs:
+				if job_name.JobBatchName == cur_batch_name: # and job_name.JobName.endswith("[MAXSCRIPT]"):
+					print(job_name.JobName)
+					if job_name.JobName.endswith("[RESIZE]"):
+						print("[RESIZE] found for this batch job to remove..")
+						RepositoryUtils.DeleteJob( job_name )
+
+			print("-----Start [RESIZE] draft job-----")
 			exrtract_parent_jobId = job.JobDependencyIDs
 			exrtract_parent_job = RepositoryUtils.GetJob(exrtract_parent_jobId[0], True)
 			print(" ***Parent job name?:", exrtract_parent_job.JobName)
