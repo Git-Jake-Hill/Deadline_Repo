@@ -344,7 +344,7 @@ class DraftEventListener (DeadlineEventListener):
 	def OnJobStart(self, job):
 		# This will update the number of tasks to match the image files that need to be resized.
 		# It must wait until the extract job is done to count all images, thats why its on job start.
-		if job.JobName.endswith("[Resize]"):
+		if job.JobName.endswith("[RESIZE]"):
 			# Get files to create one task per image
 			self.LogInfo("GET FILES:")
 			self.LogInfo(" ")
@@ -383,7 +383,7 @@ class DraftEventListener (DeadlineEventListener):
 		self.DraftSuffixDict = {}
 		
 
-		# -------- start of [resize] script here --------
+		# -------- start of [RESIZE] script here --------
 		if job.JobName.endswith("[EXr-TRACT]"):
 
 			# remove previous resize job
@@ -452,15 +452,15 @@ class DraftEventListener (DeadlineEventListener):
 
 			# create draft job in deadline to launch template script and extract layers
 			try:
-				self.CreateDraftJob(draftTemplate_jh, job, "Resize", 0, outFileNameOverride=outFile, draftArgs=scriptArgs, dependencies=exrtract_job)
-				self.LogInfo("***Draft [Resize] job submit success")
+				self.CreateDraftJob(draftTemplate_jh, job, "RESIZE", 0, outFileNameOverride=outFile, draftArgs=scriptArgs, dependencies=exrtract_job)
+				self.LogInfo("***Draft [RESIZE] job submit success")
 			
 			except:
-				self.LogInfo("Failed to create draft [Resize] job")
+				self.LogInfo("Failed to create draft [RESIZE] job")
 
 			print("Finish draft job")
 
-			# -------- finsih of [resize] script here --------
+			# -------- finsih of [RESIZE] script here --------
 
 
 
