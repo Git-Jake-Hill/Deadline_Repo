@@ -8,8 +8,9 @@ FinalFrameWidth = 4500
 FinalFrameHeight = 3000
 outFolder = ""
 
+print("-----Start [RESIZE ANIM] script job-----")
 # access extra info from parent job args
-print(sys.argv)
+print("***Arguments:", sys.argv)
 
 for item in sys.argv:
     print("  List args:", item)
@@ -18,12 +19,12 @@ for item in sys.argv:
         task_id = int(item.split("=")[-1]) -1
         print("Task ID:", task_id)
 
-    if item.startswith("FinalImageWidth="):
+    if item.startswith("finalFrameWidth="):
         FinalFrameWidth = int(item.split("=")[-1])
         print("Image width:", FinalFrameWidth)
         # print("could not find FinalImageWidth=")
 
-    if item.startswith("FinalImageHeight="):
+    if item.startswith("finalFrameHeight="):
         FinalFrameHeight = int(item.split("=")[-1])
         print("Image height:", FinalFrameHeight)
 
@@ -43,24 +44,28 @@ print(" ***Out folder:", outFolder)
 # Get files to create one task per image
 print("GET FILES:")
 print(" ")
+
 # files in the inFolder directory
-files = os.listdir( inFolder ) 
-print(str(files))
+# files = os.listdir( inFolder ) 
+# print(str(files))
+
 # search for _tile_ in the output directory
 tile_regex = re.compile("_tile_") 
 
-print("LIST OF FILES:")
-exr_list = []
-for file in files:
-    if file.endswith(".exr"):
-    # if file.startswith("V01_RE"): # test on only render elements
-        # ignore files and folder that are not exr
-        if tile_regex.search(file) == None:
-            # must not be a tile
-            print(f"Files: {file}")
-            exr_list.append(str(file))
+# print("LIST OF FILES:")
+# exr_list = []
+# for file in files:
+#     if file.endswith(".exr"):
+#     # if file.startswith("V01_RE"): # test on only render elements
+#         # ignore files and folder that are not exr
+#         if tile_regex.search(file) == None:
+#             # must not be a tile
+#             print(f"Files: {file}")
+#             exr_list.append(str(file))
 
-file = exr_list[task_id]
+file = "A01_Render - BF_.0003.exr"
+inFolder = "R:/Project/SCH001 Scharp R&D/Ben H/Post Image Submission/Rig Test A01/Render - BF/test/"
+outFolder = "R:/Project/SCH001 Scharp R&D/Ben H/Post Image Submission/Rig Test A01/Render - BF/test/out/"
 print("\nResize:", file)
 
 try:

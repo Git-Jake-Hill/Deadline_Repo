@@ -381,7 +381,7 @@ class DraftEventListener (DeadlineEventListener):
 		self.OutputPathCollection = {}
 		self.DraftSuffixDict = {}
 		
-
+		self.LogInfo("Check for anim file.")
 		# -------- start of [RESIZE] script here --------
 		if job.GetJobExtraInfoKeyValue("Anim") == "True" :
 
@@ -392,11 +392,9 @@ class DraftEventListener (DeadlineEventListener):
 			# print(" ***Parent job name?:", exrtract_parent_job.JobName)
 
 			# get view path
-			print(job.JobOutputFileNames[0])
-			image, exten = job.JobOutputFileNames[0].rsplit( '.', 1 )
-			# outFile = job.JobOutputDirectories[0] + "\\" + image + "_denoised." + exten
-			outFile = job.JobOutputDirectories[0] + "\\" + image + "." + exten
-			self.LogInfo(outFile)
+			image, exten = job.JobOutputFileNames[1].rsplit( '.', 1 )
+			outFile = job.JobOutputDirectories[1] + "\\" + image + "." + exten
+			print(" ****First frame output:", outFile)
 
 			# load template that will actulaly extract the layers
 			script_path = "events/ResizeAnimations/Resize_anim_script.py"
@@ -406,7 +404,7 @@ class DraftEventListener (DeadlineEventListener):
 			# access the values for Final Image Size
 			FinalFrameWidth = job.GetJobExtraInfoKeyValue("finalFrameWidth") 
 			FinalFrameHeight = job.GetJobExtraInfoKeyValue("finalFrameHeight") 
-			print(" ****Parent image width x height:", FinalFrameWidth, FinalFrameHeight)
+			print(" ****Final frame width x height:", FinalFrameWidth, FinalFrameHeight)
 
 			# set dependency of new job on current job
 			current_job = job.JobId
@@ -430,8 +428,8 @@ class DraftEventListener (DeadlineEventListener):
 			format['isDistributed'] = True
 			
 			# pass values of final image size to use in resize
-			scriptArgs.append('FinalImageWidth="%s" ' % FinalFrameWidth)
-			scriptArgs.append('FinalImageHeight="%s" ' % FinalFrameHeight)
+			scriptArgs.append('finalFrameWidth="%s" ' % FinalFrameWidth)
+			scriptArgs.append('finalFrameHeight="%s" ' % FinalFrameHeight)
 
 			# -------------------------------------
 
