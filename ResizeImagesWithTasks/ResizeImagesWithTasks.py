@@ -419,8 +419,8 @@ class DraftEventListener (DeadlineEventListener):
 
 			
 			# access the values for Final Image Size
-			FinalImageWidth = exrtract_parent_job.GetJobExtraInfoKeyValue("FinalImageWidth") 
-			FinalImageHeight = exrtract_parent_job.GetJobExtraInfoKeyValue("FinalImageHeight") 
+			FinalImageWidth = exrtract_parent_job.GetJobExtraInfoKeyValue("FinalImageWidth") # change to FinalFrameWidth ?
+			FinalImageHeight = exrtract_parent_job.GetJobExtraInfoKeyValue("FinalImageHeight") # change to FinalFrameHeight ?
 			print(" ****Parent image width x height:", FinalImageWidth, FinalImageHeight)
 
 			# set dependency of new job on current job
