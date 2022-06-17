@@ -41,7 +41,7 @@ class DraftEventListener (DeadlineEventListener):
 	def __init__(self):
 		# type: () -> None
 		self.OnJobSubmittedCallback += self.OnJobSubmitted
-		# self.OnJobStartedCallback += self.OnJobStart
+		self.OnJobStartedCallback += self.OnJobStart
 		
 		#member variables
 		self.OutputPathCollection = {} # type: Dict[str, int]
@@ -82,10 +82,7 @@ class DraftEventListener (DeadlineEventListener):
 
 		jobOutputFile = outputFilenames[outputIndex]
 		jobOutputDir = outputDirectories[outputIndex]
-		# output path and file to log
-		print("Output dir:", jobOutputDir)
-		print("File name:", jobOutputFile) 
-
+	
 		inputFrameList = ""
 		frames = []
 		frameRangeOverride = job.GetJobExtraInfoKeyValue("FrameRangeOverride")
@@ -110,8 +107,6 @@ class DraftEventListener (DeadlineEventListener):
 				frames.append(frame + frameOffset)
 
 			inputFrameList = FrameUtils.ToFrameString(frames)
-		# TODO: add custom frames here
-		self.LogInfo(inputFrameList)
 
 		# Grab the submission-related plugin settings
 		relativeFolder = self.GetConfigEntryWithDefault("OutputFolder", "Draft")
@@ -341,36 +336,22 @@ class DraftEventListener (DeadlineEventListener):
 	
 	## This is called when the job starts rendering.
 	def OnJobStart(self, job):
-		# This will update the number of tasks to match the image files that need to be resized.
-		# It must wait until the extract job is done to count all images, thats why its on job start.
-		if job.JobName.endswith("[RESIZE]"):
+		# This will update the number of tasks to match the animation frame range that need to be resized.
+		# The draft job must be created, thats why its on job start.
+		if job.JobName.endswith("[RESIZE ANIM]"):
+			
 			# Get files to create one task per image
-			self.LogInfo("GET FILES:")
-			self.LogInfo(" ")
-			# files in the inFolder directory
-			inFolder = job.JobOutputDirectories[0] + "\\"
-			self.LogInfo(inFolder)
+			self.LogInfo("GET FRAMES:")
 			
-			files = os.listdir( inFolder ) 
-			self.LogInfo(str(files))
-			# search for _tile_ in the output directory
-			tile_regex = re.compile("_tile_") 
+			job_frames = []
+			for frame in job.Frames:
+				job_frames.append(frame)
 
-			self.LogInfo("LIST OF FILES:")
-			exr_list = []
-			for file in files:
-				if file.endswith(".exr"):
-				# if file.startswith("V01_RE"): # test on only render elements
-					# ignore files and folder that are not exr
-					if tile_regex.search(file) == None:
-						# must not be a tile
-						self.LogInfo(f"Resize: {file}")
-						exr_list.append(str(file))
+			# set frame string range 
+			frame_string = FrameUtils.ToFrameString(job_frames)
+			self.LogInfo(frame_string)
 			
-			# set frame string range 1-x where x is the lenth of the list 
-			frame_string = "1-" + str(len(exr_list))
-
-			# set job, frame range, chunk size
+			# set job, frame range, chunk size (create tasks per frame)
 			RepositoryUtils.SetJobFrameRange(job, frame_string, 1)
 
 
@@ -381,30 +362,30 @@ class DraftEventListener (DeadlineEventListener):
 		self.OutputPathCollection = {}
 		self.DraftSuffixDict = {}
 		
-		self.LogInfo("Check for anim file.")
-		# -------- start of [RESIZE] script here --------
+		# -------- start of [RESIZE ANIM] script here --------
 		if job.GetJobExtraInfoKeyValue("Anim") == "True" :
 
-
 			print("-----Start [RESIZE ANIM] draft job-----")
-			# exrtract_parent_jobId = job.JobDependencyIDs
-			# exrtract_parent_job = RepositoryUtils.GetJob(exrtract_parent_jobId[0], True)
-			# print(" ***Parent job name?:", exrtract_parent_job.JobName)
 
-			# get view path
-			image, exten = job.JobOutputFileNames[1].rsplit( '.', 1 )
-			outFile = job.JobOutputDirectories[1] + "\\" + image + "." + exten
-			print(" ****First frame output:", outFile)
+			# get anim frames to resize if they are exr files
+			frame_output_dict = {}
+			for index, output_name in enumerate(job.JobOutputFileNames):
+				image, exten = output_name.rsplit( '.', 1 )
+				if exten == "exr":
+					key = "frame_output" + str(index)
+					value = job.JobOutputDirectories[index] + "\\" + image + "." + exten
+					frame_output_dict[key] = value
+					
+			out_file = job.JobOutputDirectories[1] + "\\" + job.JobOutputFileNames[1]
 
 			# load template that will actulaly extract the layers
 			script_path = "events/ResizeAnimations/Resize_anim_script.py"
 			draftTemplate_jh = RepositoryUtils.GetRepositoryFilePath(script_path, True)
-
 			
 			# access the values for Final Image Size
-			FinalFrameWidth = job.GetJobExtraInfoKeyValue("finalFrameWidth") 
-			FinalFrameHeight = job.GetJobExtraInfoKeyValue("finalFrameHeight") 
-			print(" ****Final frame width x height:", FinalFrameWidth, FinalFrameHeight)
+			final_frame_width = job.GetJobExtraInfoKeyValue("FinalFrameWidth") 
+			final_frame_height = job.GetJobExtraInfoKeyValue("FinalFrameHeight") 
+			print(" Final frame width x height:", final_frame_width, final_frame_height)
 
 			# set dependency of new job on current job
 			current_job = job.JobId
@@ -428,20 +409,22 @@ class DraftEventListener (DeadlineEventListener):
 			format['isDistributed'] = True
 			
 			# pass values of final image size to use in resize
-			scriptArgs.append('finalFrameWidth="%s" ' % FinalFrameWidth)
-			scriptArgs.append('finalFrameHeight="%s" ' % FinalFrameHeight)
+			scriptArgs.append('FinalFrameWidth="%s" ' % final_frame_width)
+			scriptArgs.append('FinalFrameHeight="%s" ' % final_frame_height)
+			for k,v in frame_output_dict.items():
+				scriptArgs.append(f'{k}="{v}"')
 
 			# -------------------------------------
 
 			# create draft job in deadline to launch template script and extract layers
 			try:
-				self.CreateDraftJob(draftTemplate_jh, job, "RESIZE ANIM", 0, outFileNameOverride=outFile, draftArgs=scriptArgs, dependencies=current_job)
-				self.LogInfo("***Draft [RESIZE ANIM] job submit success")
+				self.CreateDraftJob(draftTemplate_jh, job, "RESIZE ANIM", 0, outFileNameOverride=out_file, draftArgs=scriptArgs, dependencies=current_job)
+				print("-----End [RESIZE ANIM] draft job-----")
 			
 			except:
-				self.LogInfo("Failed to create draft [RESIZE] job")
+				self.LogInfo("Failed to create draft [RESIZE ANIM] job")
 
-			print("Finish draft job")
+			
 
 			# -------- finsih of [RESIZE] script here --------
 
