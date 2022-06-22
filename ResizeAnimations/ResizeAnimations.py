@@ -363,7 +363,7 @@ class DraftEventListener (DeadlineEventListener):
 		self.DraftSuffixDict = {}
 		
 		# -------- start of [RESIZE ANIM] script here --------
-		if job.GetJobExtraInfoKeyValue("Anim") == "True" :
+		if job.GetJobExtraInfoKeyValue("IsAnim") == "True" :
 
 			print("-----Start [RESIZE ANIM] draft job-----")
 
