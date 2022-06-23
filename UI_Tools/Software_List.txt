@@ -1,0 +1,12 @@
+RAILCLONE : cmd /C //SCHARPFP3/G_Drive/Temp/RF_INSTALL/RailClonePro522.exe /S /LICMODE= network /LICHOST=SCHARPFP3 /SHAREDFOLDER="//SCHARPFP3/G_Drive/Temp/RF_INSTALL/iToo_Offline_Install"
+FOREST RENDERFARM : cmd /C \\SCHARPFP2\G_Drive\Temp\RF_INSTALL\ForestPackPro712_x64 /S /LICMODE=rendernode /SHAREDFOLDER="\\SCHARPFP2\G_Drive\Temp\RF_INSTALL\iToo_Offline_Install"
+FOREST WORKSTAION : cmd /C \\SCHARPFP2\G_Drive\Temp\RF_INSTALL\ForestPackPro712_x64 /S /LICMODE=network /LICHOST=SDMELLIC01 /SHAREDFOLDER="\\SCHARPFP2\G_Drive\Temp\RF_INSTALL\iToo_Offline_Install"
+3DS MAX : cmd /C \\SCHARPFP3\G_Drive\Temp\RF_INSTALL\3DSMax2022\Autodesk_3ds_Max_2022_EFGJKPS_Win_64bit\Setup.exe -q && cmd /C \\SCHARPFP3\G_Drive\Temp\RF_INSTALL\3DSMax2022\Autodesk_3ds_Max_2022_3_EFGJKPS_Win_64bit\Setup.exe -q && cmd /C \\SCHARPFP3\G_Drive\Temp\RF_INSTALL\3DSMax2022\3dsmax-component-security-tools2023-2.1.3-059.msi -q
+V-RAY : cmd /C \\SCHARPFP3\G_Drive\Temp\RF_INSTALL\vray_adv_43002_max2018_x64.exe -configFile="\\SCHARPFP3\G_Drive\TEMP\RF_INSTALL\VRay_config.xml" -quiet=1
+V-RAY 5 : cmd /C \\SCHARPFP3\G_Drive\Temp\RF_INSTALL\vray_adv_43002_max2018_x64.exe -configFile="\\SCHARPFP3\G_Drive\TEMP\RF_INSTALL\VRay_config.xml" -quiet=1
+PHOENIX : cmd /C \\SCHARPFP2\G_Drive\Temp\RF_INSTALL\phoenixFD_adv_44000_max2018_vray4_x64.exe -configFile="\\SCHARPFP2\G_Drive\Temp\RF_INSTALL\Phoenix_config.xml" -quiet=1
+GROW FX : cmd /C \\SCHARPFP2\G_Drive\Temp\RF_INSTALL\GrowFX_RenderNode_1_9_9_SP9_3dsMax_2018_Setup.exe /S /OSTYPE=64 /MAXDIR="C:\Program Files\Autodesk\3ds Max 2018\" /DIR="C:\Program Files\Exlevel\"
+AFTER EFFECT : cmd /C \\SCHARPFP2\G_Drive\Temp\RF_INSTALL\AE_2021\Build\setup.exe
+CAMERA RAW : cmd /C \\SCHARPFP2\G_Drive\Temp\RF_INSTALL\CameraRaw_9_9.exe --mode=silent
+ANIMA : cmd /C \\SCHARPFP2\G_Drive\Temp\RF_INSTALL\Anima_Installer\anima_installer_4.1.0.exe
+CITYTRAFFIC : cmd /C \\SCHARPFP2\G_Drive\Temp\RF_INSTALL\CityTraffic-2.034.exe
