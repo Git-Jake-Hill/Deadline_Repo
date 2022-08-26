@@ -1,8 +1,8 @@
-# Deadline_Repo
+# Deadline Repo
 
 ## UI Tools
 
-This contains stand alone tools used to extend the capability of deadline by allowing the user to perform copy or software installation to multiple machines in the render farm symmaltainiously.
+This contains stand alone tools used to extend the capability of [deadline](https://aws.amazon.com/thinkbox-deadline/) by allowing the user to perform copy or software installation to multiple machines in the render farm symmaltainiously.
 
 ---
 ### Copy_Files_Or_Folders.py
@@ -27,14 +27,15 @@ Common softare used for 3D rendering is selected from the drop down menu.
 
 ---
 
-## Event callbacks
+# Custom Event callbacks
 
-Scharp deadline events used create call-backs actions on the render farm repository.
+Scharp custom [deadline events](https://docs.thinkboxsoftware.com/products/deadline/10.1/1_User%20Manual/manual/event-plugins.html) are used to create call-backs actions on the render farm repository. These are used to improve the workflow for post-production by automating the extraction of layers, resizing animations/images and creating render logs for integration with photoshop scripting.
 
-- Create Render Log
-- Extract Denoised EXR
-- Resize Images
-- Resize Images Non Denoised
-- Resize Animations
+- [Create Render Log](CreateRenderLog/CreateRenderLog.py)
+- [Extract Denoised EXR](ExtractDenisedEXR/ExtractDenisedEXR.py)
+- [Resize Animations](ResizeAnimations/ResizeAnimations.py)
+- [Resize Images](ResizeImagesWithTasks/ResizeImagesWithTasks.py)
+- [Resize Images Non Denoised](ResizeImagesTileAssembly/ResizeImagesTileAssembly.py)
+
 
 
