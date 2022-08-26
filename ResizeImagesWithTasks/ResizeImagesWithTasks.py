@@ -25,6 +25,7 @@ from typing import Any, Dict, List, Optional
 
 ##############################################################################################
 ## This is the function called by Deadline to get an instance of the Draft event listener.
+## Custom edits starting at line 343 - 463
 ##############################################################################################
 def GetDeadlineEventListener():
 	# type: () -> DraftEventListener
@@ -40,7 +41,6 @@ def CleanupDeadlineEventListener(eventListener):
 class DraftEventListener (DeadlineEventListener):
 	def __init__(self):
 		# type: () -> None
-		# self.OnJobFinishedCallback += self.OnJobFinished
 		self.OnJobSubmittedCallback += self.OnJobSubmitted
 		self.OnJobStartedCallback += self.OnJobStart
 		

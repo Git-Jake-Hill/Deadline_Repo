@@ -25,6 +25,7 @@ from typing import Any, Dict, List, Optional
 
 ##############################################################################################
 ## This is the function called by Deadline to get an instance of the Draft event listener.
+## Custom edits starting at line 340 - 412
 ##############################################################################################
 def GetDeadlineEventListener():
 	# type: () -> DraftEventListener
